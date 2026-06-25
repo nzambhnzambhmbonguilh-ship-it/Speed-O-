@@ -234,7 +234,7 @@ footer strong{color:var(--gold);}
     </div>
     <div class="cart-delivery-row">
       <span>Frais de livraison</span>
-      <span>1 000 FCFA</span>
+      <span>1 300 FCFA</span>
     </div>
     <div style="background:rgba(255,69,0,0.08);border:1px solid rgba(255,69,0,0.2);padding:12px 14px;margin-bottom:14px;border-radius:2px;">
       <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#FF4500;font-weight:700;margin-bottom:6px;">💳 Paiement Airtel Money</div>
@@ -255,6 +255,7 @@ footer strong{color:var(--gold);}
 
 <script>
 const WHATSAPP = "24165147101";
+const DELIVERY_COST = 1300;
 
 const restaurants = [
   {id:1,name:"Pizza Bella",type:"Pizzeria · Fast food",emoji:"🍕",open:"17:00",close:"23:00",
@@ -499,8 +500,8 @@ function sendOrder(){
   });
   const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
   msg+=`💰 *Total repas* : ${fmt(total)}\n`;
-  msg+=`🚚 *Livraison* : 1 000 F\n`;
-  msg+=`💳 *Total à payer* : ${fmt(total+1000)}\n\n`;
+  msg+=`🚚 *Livraison* : ${fmt(DELIVERY_COST)}\n`;
+  msg+=`💳 *Total à payer* : ${fmt(total+DELIVERY_COST)}\n\n`;
   msg+=`📍 Mon adresse : `;
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 }
@@ -510,7 +511,7 @@ function closeModal(){ document.getElementById('restoOverlay').classList.remove(
 function closeOverlayClick(e){ if(e.target===document.getElementById('restoOverlay')) closeModal(); }
 
 new QRCode(document.getElementById("qrcode"),{
-  text:"https://wa.me/24165147101?text=Bonjour+SpeedO+je+veux+commander",
+  text:window.location.href,
   width:160,height:160,colorDark:"#0A0A0A",colorLight:"#ffffff",
   correctLevel:QRCode.CorrectLevel.H
 });
