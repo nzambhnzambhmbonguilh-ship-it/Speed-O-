@@ -7,7 +7,6 @@
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <style>
-/* (Ton CSS complet reste identique - je ne le recopie pas pour gagner de la place) */
 :root {
   --orange:#FF4500; --gold:#D4A017; --black:#0A0A0A;
   --gray:#1A1A1A; --gray2:#242424; --cream:#FFF5E9;
@@ -16,290 +15,108 @@
 }
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--black);color:var(--text);font-family:'Outfit',sans-serif;}
-/* ... tout le reste de ton CSS ... */
-</style>
-</head>
-<body>
 
-<!-- Ton HTML reste exactement le même jusqu'au script -->
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,69,0,0.12);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:2px;}
+.nav-logo span{color:var(--orange);}
+.cart-btn{display:flex;align-items:center;gap:8px;background:var(--orange);color:white;border:none;cursor:pointer;padding:10px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:2px;transition:all 0.2s;}
+.cart-btn:hover{background:var(--gold);transform:translateY(-1px);}
+.cart-count{background:white;color:var(--orange);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;}
+.cart-count.hidden{display:none;}
 
-<script>
-// ==================== DONNÉES ====================
-const WHATSAPP = "24165147101";
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;background:radial-gradient(ellipse at 70% 30%,rgba(255,69,0,0.12) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(212,160,23,0.06) 0%,transparent 50%),var(--black);position:relative;}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,69,0,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(255,69,0,0.025) 1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.hero-badge{background:var(--orange);color:white;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border-radius:2px;margin-bottom:24px;animation:fadeDown 0.5s ease both;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,16vw,150px);line-height:0.9;letter-spacing:-2px;color:var(--gold);animation:fadeDown 0.5s ease 0.1s both;}
+.hero-title span{color:var(--orange);}
+.hero-slogan{font-size:clamp(13px,2.5vw,18px);font-weight:400;letter-spacing:3px;color:var(--muted);margin-top:14px;animation:fadeDown 0.5s ease 0.2s both;}
+.hero-divider{width:60px;height:2px;background:linear-gradient(90deg,var(--orange),var(--gold));margin:28px auto;animation:expandW 0.8s ease 0.3s both;}
+.hero-desc{max-width:440px;font-size:15px;line-height:1.8;color:rgba(240,234,214,0.7);animation:fadeUp 0.5s ease 0.4s both;}
+.hero-cta{display:inline-block;margin-top:32px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;text-decoration:none;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:14px 36px;border-radius:2px;box-shadow:0 8px 30px rgba(255,69,0,0.35);transition:all 0.2s;animation:fadeUp 0.5s ease 0.5s both;border:none;cursor:pointer;font-family:'Outfit',sans-serif;}
+.hero-cta:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(255,69,0,0.5);}
 
-const restaurants = [
-  {
-    id:1,
-    name:"Pizza Bella",
-    type:"Pizzeria · Fast food",
-    emoji:"🍕",
-    open:"17:00",
-    close:"23:00",
-    menu:[
-      {cat:"Pizzas",items:[
-        {name:"Pizza Margherita",desc:"Tomate, mozzarella, basilic",price:4500},
-        {name:"Pizza 4 fromages",desc:"Mélange de fromages fondus",price:5500},
-        {name:"Pizza Poulet-Champignon",desc:"Poulet grillé, champignons, crème",price:6000},
-        {name:"Pizza Royale",desc:"Jambon, olives, poivrons, mozzarella",price:6500},
-      ]},
-      {cat:"Burgers",items:[
-        {name:"Burger Maison",desc:"Bœuf, cheddar, salade, tomate",price:3500},
-      ]}
-    ]
-  },
-  {
-    id:2,
-    name:"Chez Maman Rose",
-    type:"Cuisine gabonaise",
-    emoji:"🍽️",
-    open:"10:00",
-    close:"22:00",
-    menu:[
-      {cat:"Plats locaux",items:[
-        {name:"Poulet DG + Plantain",desc:"Poulet sauté, légumes, banane plantain",price:4000},
-        {name:"Nyembwe de poulet",desc:"Poulet en sauce palme traditionnelle",price:3500},
-        {name:"Poisson braisé + Attiéké",desc:"Poisson entier grillé, semoule de manioc",price:4500},
-        {name:"Saka-saka + Viande",desc:"Feuilles de manioc pilées, viande de bœuf",price:3000},
-        {name:"Riz + Sauce arachide",desc:"Riz blanc, sauce cacahuètes maison",price:2500},
-      ]}
-    ]
-  },
-  {
-    id:3,
-    name:"Boulangerie Le Matin",
-    type:"Boulangerie · Pâtisserie",
-    emoji:"🥖",
-    open:"06:00",
-    close:"20:00",
-    menu:[
-      {cat:"Boulangerie",items:[
-        {name:"Pain baguette",desc:"Baguette fraîche du jour",price:1200},
-        {name:"Sandwich jambon-fromage",desc:"Baguette, jambon, fromage fondu",price:2500},
-        {name:"Croissant beurre",desc:"Croissant feuilleté au beurre",price:1500},
-      ]},
-      {cat:"Pâtisserie",items:[
-        {name:"Gâteau chocolat",desc:"Moelleux au chocolat maison",price:1800},
-        {name:"Jus d'orange naturel",desc:"Pressé à la commande, 33cl",price:1600},
-      ]}
-    ]
-  },
-  {
-    id:4,
-    name:"Le Grill de Moanda",
-    type:"Grillades · Brochettes",
-    emoji:"🔥",
-    open:"11:00",
-    close:"23:00",
-    menu:[
-      {cat:"Grillades",items:[
-        {name:"Brochette de bœuf",desc:"3 brochettes + frites",price:3500},
-        {name:"Poulet braisé",desc:"Demi-poulet + sauce + alloco",price:4000},
-        {name:"Poisson capitaine grillé",desc:"Entier ou filet",price:5500},
-      ]}
-    ]
-  }
-];
+/* SECTION */
+.section{padding:80px 20px;max-width:960px;margin:0 auto;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);color:var(--gold);margin-bottom:40px;}
 
-// ==================== VARIABLES GLOBALES ====================
-let cart = [];
+/* RESTAURANTS GRID */
+.restaurants-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:3px;}
+.resto-card{background:var(--gray);padding:28px 24px;cursor:pointer;position:relative;overflow:hidden;transition:transform 0.3s;border-left:3px solid transparent;}
+.resto-card:hover{transform:translateY(-4px);border-left-color:var(--orange);}
+.resto-card.closed{opacity:0.6;cursor:not-allowed;}
+.resto-card.closed:hover{transform:none;border-left-color:transparent;}
+.resto-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.resto-emoji{font-size:36px;}
+.status-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;}
+.status-badge.open{background:rgba(34,197,94,0.15);color:var(--green);}
+.status-badge.closed{background:rgba(239,68,68,0.15);color:var(--red);}
+.status-dot{width:7px;height:7px;border-radius:50%;}
+.status-dot.open{background:var(--green);animation:blink 2s ease-in-out infinite;}
+.status-dot.closed{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.resto-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px;margin-bottom:4px;}
+.resto-type{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.resto-hours{font-size:12px;color:rgba(240,234,214,0.5);}
+.resto-hours .h-open{color:var(--green);font-weight:700;}
+.resto-hours .h-closed{color:var(--red);font-weight:700;}
+.resto-cta{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);}
+.resto-cta::after{content:'→';transition:transform 0.2s;}
+.resto-card:hover .resto-cta::after{transform:translateX(4px);}
+.coming-soon{text-align:center;padding:40px;background:var(--gray);border:1px dashed rgba(255,69,0,0.2);color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
 
-// ==================== FONCTIONS ====================
-function renderRestaurants() {
-  const grid = document.getElementById('restosGrid');
-  grid.innerHTML = '';
+/* MODAL */
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:80px 16px 20px;overflow-y:auto;}
+.overlay.active{display:flex;}
+.modal{background:var(--gray);width:100%;max-width:600px;border:1px solid rgba(255,69,0,0.15);position:relative;animation:slideUp 0.3s ease;margin:auto;}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:28px 28px 20px;border-bottom:1px solid rgba(255,69,0,0.15);display:flex;align-items:flex-start;justify-content:space-between;background:var(--gray2);}
+.modal-resto-name{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);letter-spacing:1px;line-height:1;}
+.modal-resto-type{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.modal-resto-hours{font-size:12px;color:rgba(240,234,214,0.5);margin-top:6px;}
+.close-btn{background:rgba(255,255,255,0.06);border:none;cursor:pointer;color:white;width:36px;height:36px;border-radius:2px;font-size:18px;display:flex;align-items:center;justify-content:center;transition:background 0.2s;flex-shrink:0;}
+.close-btn:hover{background:rgba(255,69,0,0.3);}
 
-  restaurants.forEach(r => {
-    const now = new Date();
-    const hour = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
-    const isOpen = hour >= r.open && hour <= r.close;
+/* MENU */
+.menu-section{padding:0 28px 28px;}
+.menu-category{margin-top:24px;}
+.menu-cat-title{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--orange);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,69,0,0.2);}
+.menu-items{display:flex;flex-direction:column;gap:2px;}
+.menu-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,0.03);transition:background 0.2s;gap:12px;}
+.menu-item:hover{background:rgba(255,69,0,0.06);}
+.menu-item-info{flex:1;}
+.menu-item-name{font-size:14px;font-weight:500;margin-bottom:2px;}
+.menu-item-desc{font-size:11px;color:var(--muted);}
+.menu-item-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.menu-item-price{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;}
+.add-btn{width:32px;height:32px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;color:white;font-size:18px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.add-btn:hover{background:var(--gold);transform:scale(1.1);}
+.qty-control{display:flex;align-items:center;gap:8px;}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:transparent;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:all 0.2s;}
+.qty-btn:hover{border-color:var(--orange);color:var(--orange);}
+.qty-num{font-size:14px;font-weight:700;min-width:16px;text-align:center;color:var(--gold);}
 
-    const card = document.createElement('div');
-    card.className = `resto-card ${isOpen ? '' : 'closed'}`;
-    card.innerHTML = `
-      <div class="resto-top">
-        <div class="resto-emoji">${r.emoji}</div>
-        <div class="status-badge ${isOpen ? 'open' : 'closed'}">
-          <div class="status-dot ${isOpen ? 'open' : 'closed'}"></div>
-          ${isOpen ? 'OUVERT' : 'FERMÉ'}
-        </div>
-      </div>
-      <div class="resto-name">${r.name}</div>
-      <div class="resto-type">${r.type}</div>
-      <div class="resto-hours">
-        <span class="\( {isOpen ? 'h-open' : 'h-closed'}"> \){r.open} - ${r.close}</span>
-      </div>
-      <div class="resto-cta">Voir le menu</div>
-    `;
-    card.onclick = () => openRestaurantModal(r);
-    grid.appendChild(card);
-  });
-}
-
-function openRestaurantModal(resto) {
-  document.getElementById('modalName').textContent = resto.name;
-  document.getElementById('modalType').textContent = resto.type;
-  document.getElementById('modalHours').innerHTML = `🕒 ${resto.open} - ${resto.close}`;
-
-  const menuSection = document.getElementById('menuSection');
-  menuSection.innerHTML = '';
-
-  resto.menu.forEach(category => {
-    const catHTML = `
-      <div class="menu-category">
-        <div class="menu-cat-title">${category.cat}</div>
-        <div class="menu-items"></div>
-      </div>`;
-    const catDiv = document.createElement('div');
-    catDiv.innerHTML = catHTML;
-    const itemsContainer = catDiv.querySelector('.menu-items');
-
-    category.items.forEach(item => {
-      const itemDiv = document.createElement('div');
-      itemDiv.className = 'menu-item';
-      itemDiv.innerHTML = `
-        <div class="menu-item-info">
-          <div class="menu-item-name">${item.name}</div>
-          <div class="menu-item-desc">${item.desc}</div>
-        </div>
-        <div class="menu-item-right">
-          <div class="menu-item-price">${item.price.toLocaleString()} F</div>
-          <button class="add-btn" onclick="addToCart(\( {resto.id}, ' \){item.name}', ${item.price})">+</button>
-        </div>
-      `;
-      itemsContainer.appendChild(itemDiv);
-    });
-    menuSection.appendChild(catDiv);
-  });
-
-  document.getElementById('restoOverlay').classList.add('active');
-}
-
-function closeModal() {
-  document.getElementById('restoOverlay').classList.remove('active');
-}
-
-function closeOverlayClick(e) {
-  if (e.target.id === 'restoOverlay') closeModal();
-}
-
-// ==================== PANIER ====================
-function addToCart(restoId, name, price) {
-  const resto = restaurants.find(r => r.id === restoId);
-  cart.push({restoId, restoName: resto.name, name, price, qty: 1});
-  updateCart();
-  showToast(`${name} ajouté au panier !`);
-}
-
-function updateCart() {
-  const count = cart.reduce((sum, item) => sum + item.qty, 0);
-  document.getElementById('cartCount').textContent = count;
-  document.getElementById('cartCount').classList.toggle('hidden', count === 0);
-
-  const itemsContainer = document.getElementById('cartItems');
-  if (cart.length === 0) {
-    itemsContainer.innerHTML = `
-      <div class="cart-empty">
-        <div class="cart-empty-icon">🛒</div>
-        <div class="cart-empty-text">Ton panier est vide.<br>Choisis un restaurant !</div>
-      </div>`;
-    document.getElementById('orderBtn').disabled = true;
-    return;
-  }
-
-  let html = '';
-  let total = 0;
-
-  cart.forEach((item, index) => {
-    total += item.price * item.qty;
-    html += `
-      <div class="cart-item">
-        <div class="cart-item-info">
-          <div class="cart-item-name">${item.name}</div>
-          <div class="cart-item-resto">${item.restoName}</div>
-        </div>
-        <div class="qty-control">
-          <button class="qty-btn" onclick="changeQty(${index}, -1)">–</button>
-          <div class="qty-num">${item.qty}</div>
-          <button class="qty-btn" onclick="changeQty(${index}, 1)">+</button>
-        </div>
-        <div class="cart-item-price">${(item.price * item.qty).toLocaleString()} F</div>
-        <button class="cart-item-remove" onclick="removeFromCart(${index})">✕</button>
-      </div>`;
-  });
-
-  itemsContainer.innerHTML = html;
-  document.getElementById('cartTotal').textContent = total.toLocaleString() + ' F';
-  document.getElementById('orderBtn').disabled = false;
-}
-
-function changeQty(index, change) {
-  cart[index].qty += change;
-  if (cart[index].qty < 1) cart.splice(index, 1);
-  updateCart();
-}
-
-function removeFromCart(index) {
-  cart.splice(index, 1);
-  updateCart();
-}
-
-function toggleCart() {
-  document.getElementById('cartPanel').classList.toggle('open');
-}
-
-// ==================== COMMANDE WHATSAPP ====================
-function sendOrder() {
-  if (cart.length === 0) return;
-
-  let message = "🛵 *Nouvelle commande Speed'O* \n\n";
-  let total = 0;
-
-  cart.forEach(item => {
-    message += `• ${item.qty}x \( {item.name} ( \){item.restoName})\n`;
-    total += item.price * item.qty;
-  });
-
-  message += `\n*Total repas : ${total.toLocaleString()} FCFA*`;
-  message += `\n*Frais de livraison : 1000 FCFA*`;
-  message += `\n*Total à payer : ${(total + 1000).toLocaleString()} FCFA*`;
-
-  const url = `https://wa.me/\( {WHATSAPP}?text= \){encodeURIComponent(message)}`;
-  window.open(url, '_blank');
-  showToast("Redirection vers WhatsApp...");
-}
-
-// ==================== UTILITAIRES ====================
-function showToast(text) {
-  const toast = document.getElementById('toast');
-  toast.textContent = text;
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2800);
-}
-
-function copyAirtel() {
-  navigator.clipboard.writeText("074 14 90 55");
-  const btn = document.getElementById('copyBtn');
-  const original = btn.textContent;
-  btn.textContent = "COPIÉ ✓";
-  setTimeout(() => btn.textContent = original, 2000);
-}
-
-// ==================== INITIALISATION ====================
-window.onload = () => {
-  renderRestaurants();
-  
-  // QR Code
-  new QRCode(document.getElementById("qrcode"), {
-    text: window.location.href,
-    width: 180,
-    height: 180,
-    colorDark: "#0A0A0A",
-    colorLight: "#FFF5E9"
-  });
-};
-</script>
-</body>
-</html>.cart-total-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+/* CART PANEL */
+.cart-panel{position:fixed;top:0;right:0;bottom:0;z-index:400;width:100%;max-width:380px;background:var(--gray);border-left:1px solid rgba(255,69,0,0.15);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
+.cart-panel.open{transform:translateX(0);}
+.cart-header{padding:20px 24px;border-bottom:1px solid rgba(255,69,0,0.15);display:flex;align-items:center;justify-content:space-between;background:var(--gray2);}
+.cart-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;}
+.cart-items{flex:1;overflow-y:auto;padding:16px;}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;gap:12px;}
+.cart-empty-icon{font-size:48px;opacity:0.4;}
+.cart-empty-text{font-size:13px;letter-spacing:1px;}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.cart-item-resto{font-size:11px;color:var(--orange);letter-spacing:1px;}
+.cart-item-price{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap;}
+.cart-item-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;transition:color 0.2s;padding:4px;}
+.cart-item-remove:hover{color:var(--red);}
+.cart-footer{padding:20px 24px;border-top:1px solid rgba(255,69,0,0.15);background:var(--gray2);}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.cart-total-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 .cart-total-amount{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);}
 .cart-delivery-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:20px;}
 .cart-delivery-row span:last-child{color:var(--green);font-weight:600;}
@@ -348,7 +165,7 @@ footer strong{color:var(--gold);}
 <section class="hero">
   <div class="hero-badge">🛵 Livraison à domicile · Moanda · Gabon</div>
   <h1 class="hero-title">SPEED<span>'</span>O</h1>
-  <p class="hero-slogan">Clique. Commande. Régale-toi !</p>
+  <p class="hero-slogan">Scanne. Commande. Régale-toi !</p>
   <div class="hero-divider"></div>
   <p class="hero-desc">Commande auprès des meilleurs restaurants de Moanda et reçois ton repas chaud directement chez toi.</p>
   <button class="hero-cta" onclick="document.getElementById('restaurants').scrollIntoView({behavior:'smooth'})">
@@ -381,7 +198,7 @@ footer strong{color:var(--gold);}
   <p style="font-size:12px;color:rgba(10,10,10,0.45);letter-spacing:2px;text-transform:uppercase;">Scanne pour accéder au site Speed'O</p>
 </section>
 
-<footer><strong>SPEED'O</strong> — Clique. Commande. Régale-toi !<br><br>Moanda · Gabon · +241 65 14 71 01</footer>
+<footer><strong>SPEED'O</strong> — Scanne. Commande. Régale-toi !<br><br>Moanda · Gabon · +241 65 14 71 01</footer>
 
 <!-- MODAL RESTAURANT -->
 <div class="overlay" id="restoOverlay" onclick="closeOverlayClick(event)">
@@ -419,6 +236,15 @@ footer strong{color:var(--gold);}
       <span>Frais de livraison</span>
       <span>1 000 FCFA</span>
     </div>
+    <div style="background:rgba(255,69,0,0.08);border:1px solid rgba(255,69,0,0.2);padding:12px 14px;margin-bottom:14px;border-radius:2px;">
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#FF4500;font-weight:700;margin-bottom:6px;">💳 Paiement Airtel Money</div>
+      <div style="font-size:12px;color:rgba(240,234,214,0.6);margin-bottom:8px;">Envoyez le montant total au numéro :</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);padding:10px 12px;border-radius:2px;">
+        <span id="airtelNum" style="font-size:18px;font-weight:700;color:#D4A017;letter-spacing:2px;">074 14 90 55</span>
+        <button onclick="copyAirtel()" style="background:#FF4500;border:none;color:white;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;border-radius:2px;letter-spacing:1px;" id="copyBtn">COPIER</button>
+      </div>
+      <div style="font-size:10px;color:rgba(240,234,214,0.35);margin-top:6px;">Nom : Speed'O · Mentionnez votre commande en référence</div>
+    </div>
     <button class="order-btn" id="orderBtn" onclick="sendOrder()" disabled>
       🛵 Commander sur WhatsApp
     </button>
@@ -431,7 +257,7 @@ footer strong{color:var(--gold);}
 const WHATSAPP = "24165147101";
 
 const restaurants = [
-  {id:1,name:"Bessa Benna",type:"Pizzeria · Fast food",emoji:"🍕",open:"17:00",close:"23:00",
+  {id:1,name:"Pizza Bella",type:"Pizzeria · Fast food",emoji:"🍕",open:"17:00",close:"23:00",
    menu:[{cat:"Pizzas",items:[
      {name:"Pizza Margherita",desc:"Tomate, mozzarella, basilic",price:4500},
      {name:"Pizza 4 fromages",desc:"Mélange de fromages fondus",price:5500},
@@ -691,6 +517,17 @@ new QRCode(document.getElementById("qrcode"),{
 
 renderRestos();
 setInterval(renderRestos, 60000);
+
+function copyAirtel() {
+  navigator.clipboard.writeText('074149055').then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = '✓ COPIÉ';
+    btn.style.background = '#22c55e';
+    setTimeout(() => { btn.textContent = 'COPIER'; btn.style.background = '#FF4500'; }, 2000);
+  }).catch(() => {
+    toast('Numéro : 074 14 90 55');
+  });
+}
 </script>
 </body>
 </html>
