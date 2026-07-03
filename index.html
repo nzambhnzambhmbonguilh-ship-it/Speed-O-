@@ -114,12 +114,18 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.9
 .cart-item-price{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap;}
 .cart-item-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;transition:color 0.2s;padding:4px;}
 .cart-item-remove:hover{color:var(--red);}
-.cart-footer{padding:20px 24px;border-top:1px solid rgba(255,69,0,0.15);background:var(--gray2);}
+.cart-footer{padding:20px 24px;border-top:1px solid rgba(255,69,0,0.15);background:var(--gray2);overflow-y:auto;max-height:50vh;}
 .cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
 .cart-total-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
 .cart-total-amount{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);}
 .cart-delivery-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:20px;}
 .cart-delivery-row span:last-child{color:var(--green);font-weight:600;}
+.quartier-select{width:100%;padding:10px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,69,0,0.2);color:var(--text);border-radius:2px;font-family:'Outfit',sans-serif;margin-bottom:14px;font-size:12px;}
+.quartier-select option{background:var(--gray);color:var(--text);}
+.payment-btns{display:flex;gap:8px;margin-bottom:14px;}
+.payment-btn{flex:1;padding:12px;border:1px solid rgba(255,69,0,0.3);background:rgba(255,69,0,0.1);color:var(--text);cursor:pointer;font-size:12px;font-weight:700;border-radius:2px;transition:all 0.2s;text-transform:uppercase;}
+.payment-btn.active{background:var(--orange);color:white;border-color:var(--orange);}
+.payment-btn:hover{border-color:var(--orange);}
 .order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:2px;transition:all 0.2s;box-shadow:0 8px 24px rgba(255,69,0,0.3);}
 .order-btn:hover{transform:translateY(-2px);box-shadow:0 12px 32px rgba(255,69,0,0.5);}
 .order-btn:disabled{opacity:0.4;cursor:not-allowed;transform:none;}
@@ -232,19 +238,39 @@ footer strong{color:var(--gold);}
       <span class="cart-total-label">Total repas</span>
       <span class="cart-total-amount" id="cartTotal">0 F</span>
     </div>
+    
+    <div style="margin-bottom:14px;">
+      <label style="font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;margin-bottom:6px;display:block;">Sélectionne ton quartier</label>
+      <select class="quartier-select" id="quartierSelect" onchange="updateDeliveryPrice()">
+        <option value="normal">Autres quartiers (2 000 F)</option>
+        <option value="moanda3">Moanda 3 (3 500 F)</option>
+        <option value="setrag">Setrag (3 500 F)</option>
+        <option value="citemoulili">Cité Moulili (3 500 F)</option>
+        <option value="bellevue">Belle-vue (3 500 F)</option>
+      </select>
+    </div>
+
     <div class="cart-delivery-row">
       <span>Frais de livraison</span>
-      <span>1 300 FCFA</span>
+      <span id="deliveryPrice">2 000 FCFA</span>
     </div>
+
     <div style="background:rgba(255,69,0,0.08);border:1px solid rgba(255,69,0,0.2);padding:12px 14px;margin-bottom:14px;border-radius:2px;">
-      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#FF4500;font-weight:700;margin-bottom:6px;">💳 Paiement Airtel Money</div>
-      <div style="font-size:12px;color:rgba(240,234,214,0.6);margin-bottom:8px;">Envoyez le montant total au numéro :</div>
-      <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);padding:10px 12px;border-radius:2px;">
-        <span id="airtelNum" style="font-size:18px;font-weight:700;color:#D4A017;letter-spacing:2px;">074 14 90 55</span>
-        <button onclick="copyAirtel()" style="background:#FF4500;border:none;color:white;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;border-radius:2px;letter-spacing:1px;" id="copyBtn">COPIER</button>
+      <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:#FF4500;font-weight:700;margin-bottom:10px;">💳 Mode de paiement</div>
+      <div class="payment-btns">
+        <button class="payment-btn active" id="paymentCash" onclick="setPaymentMethod('cash')">💵 Espèces</button>
+        <button class="payment-btn" id="paymentAirtel" onclick="setPaymentMethod('airtel')">📱 Airtel Money</button>
       </div>
-      <div style="font-size:10px;color:rgba(240,234,214,0.35);margin-top:6px;">Nom : Speed'O · Mentionnez votre commande en référence</div>
+      <div id="airtelBox" style="display:none;">
+        <div style="font-size:12px;color:rgba(240,234,214,0.6);margin-bottom:8px;">Envoyez le montant au numéro :</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,0.06);padding:10px 12px;border-radius:2px;">
+          <span id="airtelNum" style="font-size:18px;font-weight:700;color:#D4A017;letter-spacing:2px;">074 14 90 55</span>
+          <button onclick="copyAirtel()" style="background:#FF4500;border:none;color:white;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;border-radius:2px;letter-spacing:1px;" id="copyBtn">COPIER</button>
+        </div>
+        <div style="font-size:10px;color:rgba(240,234,214,0.35);margin-top:6px;">Nom : Speed'O · Mentionnez votre commande en référence</div>
+      </div>
     </div>
+
     <button class="order-btn" id="orderBtn" onclick="sendOrder()" disabled>
       🛵 Commander sur WhatsApp
     </button>
@@ -255,63 +281,62 @@ footer strong{color:var(--gold);}
 
 <script>
 const WHATSAPP = "24165147101";
-const DELIVERY_COST = 1300;
+const DELIVERY_COST_NORMAL = 2000;
+const DELIVERY_COST_PREMIUM = 3500;
+const PREMIUM_QUARTIERS = ["moanda3", "setrag", "citemoulili", "bellevue"];
 
 const restaurants = [
-  {id:1,name:"Pizza Bella",type:"Pizzeria · Fast food",emoji:"🍕",open:"17:00",close:"23:00",
-   menu:[{cat:"Pizzas",items:[
-     {name:"Pizza Margherita",desc:"Tomate, mozzarella, basilic",price:4500},
-     {name:"Pizza 4 fromages",desc:"Mélange de fromages fondus",price:5500},
-     {name:"Pizza Poulet-Champignon",desc:"Poulet grillé, champignons, crème",price:6000},
-     {name:"Pizza Royale",desc:"Jambon, olives, poivrons, mozzarella",price:6500},
-   ]},{cat:"Burgers",items:[
-     {name:"Burger Maison",desc:"Bœuf, cheddar, salade, tomate",price:3500},
+  {id:1,name:"Super Toque",type:"Pâtisserie · Pizzeria",emoji:"🎂",open:"07:00",close:"22:00",prep:25,
+   menu:[{cat:"Gâteaux Mariages & Anniversaires",items:[
+     {name:"Gâteau 10 parts",desc:"Délicieux gâteau pour 10 personnes",price:15500},
+     {name:"Gâteau 15 parts",desc:"Délicieux gâteau pour 15 personnes",price:23000},
+     {name:"Gâteau 20 parts",desc:"Délicieux gâteau pour 20 personnes",price:30500},
+   ]},{cat:"Pizzas",items:[
+     {name:"Vosgienne",desc:"Spécialité française",price:7000},
+     {name:"Corléone",desc:"Saveur italienne",price:8000},
+     {name:"Végétarienne",desc:"Sans viande",price:6500},
+     {name:"Mexicaine",desc:"Épicée à souhait",price:8000},
+     {name:"Colombienne",desc:"Goût authentique",price:7000},
+     {name:"Margarita",desc:"Classique intemporel",price:6000},
+     {name:"Régina",desc:"Reine des pizzas",price:7000},
+     {name:"Quatre Saisons",desc:"Les saveurs de l'année",price:8000},
+     {name:"Volcano",desc:"Chaude et épicée",price:8000},
+     {name:"Galzone",desc:"Spécialité maison",price:8000},
+     {name:"Océane",desc:"Fruits de mer",price:8000},
+   ]},{cat:"Boissons",items:[
+     {name:"Moca",desc:"Délicieuse boisson",price:2000},
    ]}]},
-  {id:2,name:"Chez Maman Rose",type:"Cuisine gabonaise",emoji:"🍽️",open:"10:00",close:"22:00",
-   menu:[{cat:"Plats locaux",items:[
-     {name:"Poulet DG + Plantain",desc:"Poulet sauté, légumes, banane plantain",price:4000},
-     {name:"Nyembwe de poulet",desc:"Poulet en sauce palme traditionnelle",price:3500},
-     {name:"Poisson braisé + Attiéké",desc:"Poisson entier grillé, semoule de manioc",price:4500},
-     {name:"Saka-saka + Viande",desc:"Feuilles de manioc pilées, viande de bœuf",price:3000},
-     {name:"Riz + Sauce arachide",desc:"Riz blanc, sauce cacahuètes maison",price:2500},
-   ]}]},
-  {id:3,name:"Boulangerie Le Matin",type:"Boulangerie · Pâtisserie",emoji:"🥖",open:"06:00",close:"20:00",
-   menu:[{cat:"Boulangerie",items:[
-     {name:"Pain baguette",desc:"Baguette fraîche du jour",price:1200},
-     {name:"Sandwich jambon-fromage",desc:"Baguette, jambon, fromage fondu",price:2500},
-     {name:"Croissant beurre",desc:"Croissant feuilleté au beurre",price:1500},
-   ]},{cat:"Pâtisserie",items:[
-     {name:"Gâteau chocolat",desc:"Moelleux au chocolat maison",price:1800},
-     {name:"Jus d'orange naturel",desc:"Pressé à la commande, 33cl",price:1600},
-   ]}]},
-  {id:4,name:"Le Grill du Coin",type:"Grillades · Brochettes",emoji:"🍗",open:"16:00",close:"00:00",
-   menu:[{cat:"Grillades",items:[
-     {name:"Brochettes de bœuf (5)",desc:"Viande marinée, grillée au charbon",price:3000},
-     {name:"Poulet grillé entier",desc:"Poulet entier, sauce pimentée",price:6000},
-     {name:"Demi-poulet + Frites",desc:"Demi-poulet grillé, frites maison",price:4000},
-     {name:"Porc grillé + Banane",desc:"Côtes de porc, banane plantain grillée",price:3500},
-     {name:"Saucisses grillées (3)",desc:"Saucisses de bœuf grillées",price:2500},
-   ]}]},
-  {id:5,name:"Fast Corner",type:"Fast food · Snack",emoji:"🍔",open:"11:00",close:"23:00",
-   menu:[{cat:"Burgers",items:[
-     {name:"Burger Classic",desc:"Steak haché, salade, tomate, mayo",price:3000},
-     {name:"Burger Double",desc:"Double steak, cheddar, oignons caramélisés",price:4000},
-   ]},{cat:"Accompagnements",items:[
-     {name:"Frites maison",desc:"Pommes de terre fraîches, sel, épices",price:1700},
-     {name:"Hot-dog garni",desc:"Saucisse, moutarde, ketchup, oignons",price:2200},
-   ]}]},
-  {id:6,name:"Café Saveur",type:"Café · Petit-déjeuner",emoji:"🫖",open:"06:30",close:"14:00",
-   menu:[{cat:"Petit-déjeuner",items:[
-     {name:"Petit-déj complet",desc:"Café, pain beurre, jus, œuf",price:3000},
-     {name:"Café + Pain beurre",desc:"Café chaud, baguette beurrée",price:1800},
-     {name:"Omelette + Toast",desc:"Omelette 3 œufs, 2 toasts beurrés",price:2500},
-     {name:"Jus fruits frais",desc:"Ananas, mangue ou orange, 33cl",price:1700},
+  {id:2,name:"Bessa-Benna",type:"Restaurant · Grillades",emoji:"🍖",open:"10:00",close:"22:00",prep:30,
+   menu:[{cat:"Grillades & Brochettes",items:[
+     {name:"Brochette de poulet",desc:"Tendre et juteux",price:7500},
+     {name:"Brochette de bœuf",desc:"Premium",price:12500},
+     {name:"Filet de bœuf",desc:"Très tendre",price:12500},
+     {name:"Shawarma poulet",desc:"Savoureux",price:3000},
+     {name:"Saucisses de Toulouse",desc:"Authentiques",price:6500},
+     {name:"Nkumu 3 pièces",desc:"Spécialité locale",price:4000},
+     {name:"Steak haché",desc:"Savoureux",price:5500},
+   ]},{cat:"Plats Traditionnels",items:[
+     {name:"Aubergines poisson salé",desc:"Recette maison",price:7000},
+     {name:"Tortue",desc:"Délice rare",price:7500},
+     {name:"Gazelle",desc:"Spécialité du chef",price:5500},
+     {name:"Asperges",desc:"Légumes frais",price:6500},
+     {name:"Bouillon de Carpe",desc:"Traditionnel",price:5500},
+     {name:"Poisson Chat",desc:"Frais du jour",price:7500},
+     {name:"Poisson salé choux carottes",desc:"Classique",price:7000},
+     {name:"Crocodile",desc:"Exotique",price:7500},
+     {name:"Folong",desc:"Local et savoureux",price:4500},
+     {name:"Feuilles de manioc",desc:"Tradition gabonaise",price:4500},
+     {name:"Mouniaka",desc:"Plat du pays",price:5500},
+     {name:"Oseille",desc:"Acidulée",price:4000},
+     {name:"Purée de manioc",desc:"Accompagnement parfait",price:2000},
    ]}]},
 ];
 
 let cart = [];
 let qtys = {};
 let currentResto = null;
+let currentPaymentMethod = 'cash';
+let currentDeliveryCost = DELIVERY_COST_NORMAL;
 
 function isOpen(r) {
   const now = new Date();
@@ -364,7 +389,7 @@ function openResto(r){
   currentResto=r;
   document.getElementById('modalName').textContent=r.name;
   document.getElementById('modalType').textContent=r.type;
-  document.getElementById('modalHours').textContent=`Ouvert de ${r.open} à ${r.close}`;
+  document.getElementById('modalHours').textContent=`Ouvert de ${r.open} à ${r.close} · Préparation : ${r.prep}min`;
   const ms=document.getElementById('menuSection');
   ms.innerHTML='';
   r.menu.forEach(cat=>{
@@ -485,6 +510,19 @@ function refreshCart(){
   });
 }
 
+function updateDeliveryPrice(){
+  const quartier = document.getElementById('quartierSelect').value;
+  currentDeliveryCost = PREMIUM_QUARTIERS.includes(quartier) ? DELIVERY_COST_PREMIUM : DELIVERY_COST_NORMAL;
+  document.getElementById('deliveryPrice').textContent = fmt(currentDeliveryCost);
+}
+
+function setPaymentMethod(method){
+  currentPaymentMethod = method;
+  document.getElementById('paymentCash').classList.toggle('active', method === 'cash');
+  document.getElementById('paymentAirtel').classList.toggle('active', method === 'airtel');
+  document.getElementById('airtelBox').style.display = method === 'airtel' ? 'block' : 'none';
+}
+
 function sendOrder(){
   if(!cart.length) return;
   const byResto={};
@@ -499,9 +537,13 @@ function sendOrder(){
     msg+='\n';
   });
   const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
+  const quartierSelect = document.getElementById('quartierSelect');
+  const quartierText = quartierSelect.options[quartierSelect.selectedIndex].text;
+  msg+=`📍 *Quartier* : ${quartierText}\n`;
   msg+=`💰 *Total repas* : ${fmt(total)}\n`;
-  msg+=`🚚 *Livraison* : ${fmt(DELIVERY_COST)}\n`;
-  msg+=`💳 *Total à payer* : ${fmt(total+DELIVERY_COST)}\n\n`;
+  msg+=`🚚 *Livraison* : ${fmt(currentDeliveryCost)}\n`;
+  msg+=`💳 *Total à payer* : ${fmt(total+currentDeliveryCost)}\n`;
+  msg+=`💳 *Mode de paiement* : ${currentPaymentMethod === 'cash' ? '💵 Espèces' : '📱 Airtel Money'}\n\n`;
   msg+=`📍 Mon adresse : `;
   window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
 }
