@@ -444,6 +444,447 @@ function removeFromCart(key){
     if(r) refreshItemEl(r,item.name,item.price);
   }
   cart=cart.filter(c=>c.key!==key);
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speed'O — Scanne. Commande. Régale-toi !</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<style>
+:root{--orange:#FF4500;--gold:#D4A017;--black:#0A0A0A;--gray:#1A1A1A;--gray2:#242424;--cream:#FFF5E9;--green:#22c55e;--red:#ef4444;--text:#F0EAD6;--muted:rgba(240,234,214,0.45);}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--black);color:var(--text);font-family:'Outfit',sans-serif;}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,69,0,0.12);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
+.nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:2px;}
+.nav-logo span{color:var(--orange);}
+.cart-btn{display:flex;align-items:center;gap:8px;background:var(--orange);color:white;border:none;cursor:pointer;padding:10px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:2px;transition:all 0.2s;}
+.cart-btn:hover{background:var(--gold);}
+.cart-count{background:white;color:var(--orange);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;}
+.cart-count.hidden{display:none;}
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;background:radial-gradient(ellipse at 70% 30%,rgba(255,69,0,0.12) 0%,transparent 60%),var(--black);}
+.hero-badge{background:var(--orange);color:white;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border-radius:2px;margin-bottom:24px;}
+.hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,16vw,150px);line-height:0.9;letter-spacing:-2px;color:var(--gold);}
+.hero-title span{color:var(--orange);}
+.hero-slogan{font-size:clamp(13px,2.5vw,18px);letter-spacing:3px;color:var(--muted);margin-top:14px;}
+.hero-divider{width:60px;height:2px;background:linear-gradient(90deg,var(--orange),var(--gold));margin:28px auto;}
+.hero-desc{max-width:440px;font-size:15px;line-height:1.8;color:rgba(240,234,214,0.7);}
+.hero-cta{display:inline-block;margin-top:32px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:14px 36px;border-radius:2px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;}
+.section{padding:80px 20px;max-width:960px;margin:0 auto;}
+.section-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
+.section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);color:var(--gold);margin-bottom:40px;}
+.restaurants-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:3px;}
+.resto-card{background:var(--gray);padding:28px 24px;cursor:pointer;position:relative;transition:transform 0.3s;border-left:3px solid transparent;}
+.resto-card:hover{transform:translateY(-4px);border-left-color:var(--orange);}
+.resto-card.closed{opacity:0.6;cursor:not-allowed;}
+.resto-card.closed:hover{transform:none;border-left-color:transparent;}
+.resto-top{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;}
+.resto-emoji{font-size:36px;}
+.status-badge{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:4px 10px;border-radius:20px;}
+.status-badge.open{background:rgba(34,197,94,0.15);color:var(--green);}
+.status-badge.closed{background:rgba(239,68,68,0.15);color:var(--red);}
+.status-dot{width:7px;height:7px;border-radius:50%;}
+.status-dot.open{background:var(--green);animation:blink 2s ease-in-out infinite;}
+.status-dot.closed{background:var(--red);}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0.4}}
+.resto-name{font-family:'Bebas Neue',sans-serif;font-size:22px;color:var(--gold);letter-spacing:1px;margin-bottom:4px;}
+.resto-type{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;}
+.resto-hours{font-size:12px;color:rgba(240,234,214,0.5);}
+.h-open{color:var(--green);font-weight:700;}
+.h-closed{color:var(--red);font-weight:700;}
+.resto-note{font-size:11px;color:var(--gold);margin-top:6px;}
+.resto-cta{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);}
+.coming-soon{text-align:center;padding:40px;background:var(--gray);border:1px dashed rgba(255,69,0,0.2);color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:80px 16px 20px;overflow-y:auto;}
+.overlay.active{display:flex;}
+.modal{background:var(--gray);width:100%;max-width:600px;border:1px solid rgba(255,69,0,0.15);margin:auto;animation:slideUp 0.3s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{padding:28px 28px 20px;border-bottom:1px solid rgba(255,69,0,0.15);display:flex;align-items:flex-start;justify-content:space-between;background:var(--gray2);}
+.modal-resto-name{font-family:'Bebas Neue',sans-serif;font-size:36px;color:var(--gold);line-height:1;}
+.modal-resto-type{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
+.modal-resto-hours{font-size:12px;color:rgba(240,234,214,0.5);margin-top:6px;}
+.modal-resto-note{font-size:12px;color:var(--gold);margin-top:6px;}
+.close-btn{background:rgba(255,255,255,0.06);border:none;cursor:pointer;color:white;width:36px;height:36px;border-radius:2px;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.close-btn:hover{background:rgba(255,69,0,0.3);}
+.menu-section{padding:0 28px 28px;}
+.menu-category{margin-top:24px;}
+.menu-cat-title{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--orange);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid rgba(255,69,0,0.2);}
+.menu-items{display:flex;flex-direction:column;gap:2px;}
+.menu-item{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;background:rgba(255,255,255,0.03);gap:12px;}
+.menu-item:hover{background:rgba(255,69,0,0.06);}
+.menu-item-info{flex:1;}
+.menu-item-name{font-size:14px;font-weight:500;margin-bottom:2px;}
+.menu-item-desc{font-size:11px;color:var(--muted);}
+.menu-item-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.menu-item-price{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;}
+.add-btn{width:32px;height:32px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;color:white;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.qty-control{display:flex;align-items:center;gap:8px;}
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:transparent;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
+.qty-btn:hover{border-color:var(--orange);color:var(--orange);}
+.qty-num{font-size:14px;font-weight:700;min-width:16px;text-align:center;color:var(--gold);}
+.cart-panel{position:fixed;top:0;right:0;bottom:0;z-index:400;width:100%;max-width:380px;background:var(--gray);border-left:1px solid rgba(255,69,0,0.15);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
+.cart-panel.open{transform:translateX(0);}
+.cart-header{padding:20px 24px;border-bottom:1px solid rgba(255,69,0,0.15);display:flex;align-items:center;justify-content:space-between;background:var(--gray2);}
+.cart-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;}
+.cart-items{flex:1;overflow-y:auto;padding:16px;}
+.cart-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;color:var(--muted);text-align:center;gap:12px;}
+.cart-empty-icon{font-size:48px;opacity:0.4;}
+.cart-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05);}
+.cart-item-info{flex:1;}
+.cart-item-name{font-size:13px;font-weight:600;margin-bottom:2px;}
+.cart-item-resto{font-size:11px;color:var(--orange);}
+.cart-item-price{font-size:13px;font-weight:700;color:var(--gold);white-space:nowrap;}
+.cart-item-remove{background:none;border:none;cursor:pointer;color:var(--muted);font-size:16px;padding:4px;}
+.cart-item-remove:hover{color:var(--red);}
+.cart-footer{padding:20px 24px;border-top:1px solid rgba(255,69,0,0.15);background:var(--gray2);}
+.cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;}
+.cart-total-label{font-size:12px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+.cart-total-amount{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);}
+.delivery-info{font-size:11px;color:rgba(240,234,214,0.4);margin-bottom:14px;line-height:1.6;padding:10px;background:rgba(255,69,0,0.06);border-radius:2px;border-left:2px solid var(--orange);}
+.delivery-info strong{color:var(--gold);}
+.pay-section{margin-bottom:14px;}
+.pay-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--orange);font-weight:700;margin-bottom:8px;}
+.pay-btns{display:flex;gap:8px;}
+.pay-btn{flex:1;padding:10px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:12px;font-weight:700;letter-spacing:1px;border-radius:2px;transition:all 0.2s;}
+.pay-btn.active{background:var(--orange);color:white;}
+.pay-btn.inactive{background:var(--gray);color:var(--muted);border:1px solid rgba(255,69,0,0.2);}
+.momo-box{margin-top:10px;background:rgba(255,255,255,0.04);padding:12px;border-radius:2px;border:1px solid rgba(255,69,0,0.15);}
+.momo-num{font-size:18px;font-weight:700;color:var(--gold);letter-spacing:2px;}
+.momo-copy{background:var(--orange);border:none;color:white;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;border-radius:2px;margin-left:10px;}
+.order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:2px;}
+.order-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.steps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:3px;margin-top:40px;}
+.step{background:var(--gray);padding:28px 20px;}
+.step-num{font-family:'Bebas Neue',sans-serif;font-size:56px;color:rgba(255,69,0,0.12);line-height:1;}
+.step-icon{font-size:24px;margin:8px 0;}
+.step-title{font-weight:700;font-size:14px;color:var(--gold);margin-bottom:6px;}
+.step-desc{font-size:12px;color:var(--muted);line-height:1.7;}
+.qr-section{background:var(--cream);color:var(--black);text-align:center;padding:80px 20px;}
+.qr-box{display:inline-block;background:white;padding:16px;border-radius:4px;margin:28px auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);}
+footer{background:var(--gray);text-align:center;padding:36px 20px;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;border-top:1px solid rgba(255,69,0,0.1);}
+footer strong{color:var(--gold);}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gray);color:white;padding:12px 24px;border-radius:2px;border-left:3px solid var(--orange);font-size:13px;font-weight:600;z-index:999;transition:transform 0.3s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">SPEED<span>'</span>O</div>
+  <button class="cart-btn" onclick="toggleCart()">
+    🛒 Mon panier
+    <div class="cart-count hidden" id="cartCount">0</div>
+  </button>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">🛵 Livraison à domicile · Moanda · Gabon</div>
+  <h1 class="hero-title">SPEED<span>'</span>O</h1>
+  <p class="hero-slogan">Scanne. Commande. Régale-toi !</p>
+  <div class="hero-divider"></div>
+  <p class="hero-desc">Commande auprès des meilleurs restaurants de Moanda et reçois ton repas chaud directement chez toi.</p>
+  <button class="hero-cta" onclick="document.getElementById('restaurants').scrollIntoView({behavior:'smooth'})">🍽️ Voir les restaurants</button>
+</section>
+
+<section class="section" id="restaurants">
+  <p class="section-label">Nos partenaires</p>
+  <h2 class="section-title">Choisir un restaurant</h2>
+  <div class="restaurants-grid" id="restosGrid"></div>
+  <div class="coming-soon">+ D'autres restaurants arrivent bientôt</div>
+</section>
+
+<section class="section" style="padding-top:0;">
+  <p class="section-label">Simple comme bonjour</p>
+  <h2 class="section-title">Comment ça marche ?</h2>
+  <div class="steps-grid">
+    <div class="step"><div class="step-num">01</div><div class="step-icon">🏪</div><div class="step-title">Tu choisis</div><div class="step-desc">Sélectionne un restaurant ouvert et parcours son menu.</div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-icon">🛒</div><div class="step-title">Tu remplis</div><div class="step-desc">Ajoute tes plats au panier en un clic.</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-icon">📱</div><div class="step-title">Tu commandes</div><div class="step-desc">Clique sur Commander — ta commande part sur WhatsApp.</div></div>
+    <div class="step"><div class="step-num">04</div><div class="step-icon">😋</div><div class="step-title">Tu te régales</div><div class="step-desc">Ton repas chaud arrive à ta porte. Cash ou Mobile Money.</div></div>
+  </div>
+</section>
+
+<section class="qr-section">
+  <p class="section-label" style="color:var(--orange);">Accès rapide</p>
+  <h2 style="font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);color:var(--black);margin-bottom:0;">Scanne &amp; commande</h2>
+  <div class="qr-box"><div id="qrcode"></div></div>
+  <p style="font-size:12px;color:rgba(10,10,10,0.45);letter-spacing:2px;text-transform:uppercase;">Scanne pour accéder au site Speed'O</p>
+</section>
+
+<footer><strong>SPEED'O</strong> — Scanne. Commande. Régale-toi !<br><br>Moanda · Gabon · +241 65 14 71 01</footer>
+
+<!-- MODAL -->
+<div class="overlay" id="restoOverlay" onclick="closeOverlayClick(event)">
+  <div class="modal" id="restoModal">
+    <div class="modal-header">
+      <div>
+        <div class="modal-resto-name" id="modalName"></div>
+        <div class="modal-resto-type" id="modalType"></div>
+        <div class="modal-resto-hours" id="modalHours"></div>
+        <div class="modal-resto-note" id="modalNote"></div>
+      </div>
+      <button class="close-btn" onclick="closeModal()">✕</button>
+    </div>
+    <div class="menu-section" id="menuSection"></div>
+  </div>
+</div>
+
+<!-- CART -->
+<div class="cart-panel" id="cartPanel">
+  <div class="cart-header">
+    <div class="cart-title">Mon Panier</div>
+    <button class="close-btn" onclick="toggleCart()">✕</button>
+  </div>
+  <div class="cart-items" id="cartItems">
+    <div class="cart-empty">
+      <div class="cart-empty-icon">🛒</div>
+      <div style="font-size:13px;">Ton panier est vide.<br>Choisis un restaurant !</div>
+    </div>
+  </div>
+  <div class="cart-footer">
+    <div class="cart-total-row">
+      <span class="cart-total-label">Total repas</span>
+      <span class="cart-total-amount" id="cartTotal">0 F</span>
+    </div>
+    <div class="delivery-info">
+      🚚 <strong>Livraison : 2 000 FCFA</strong><br>
+      Zones éloignées (Moanda 3, Setrag, Cité Moulili, Belle-vue) : <strong>3 500 FCFA</strong>
+    </div>
+    <div class="pay-section">
+      <div class="pay-label">💳 Mode de paiement</div>
+      <div class="pay-btns">
+        <button class="pay-btn active" id="btnCash" onclick="setPayment('cash')">💵 CASH</button>
+        <button class="pay-btn inactive" id="btnMomo" onclick="setPayment('momo')">📱 MOBILE MONEY</button>
+      </div>
+      <div id="momoBox" style="display:none;" class="momo-box">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;">Envoyez le montant au numéro Airtel Money :</div>
+        <div style="display:flex;align-items:center;justify-content:space-between;">
+          <span class="momo-num">074 14 90 55</span>
+          <button class="momo-copy" id="copyBtn" onclick="copyAirtel()">COPIER</button>
+        </div>
+        <div style="font-size:10px;color:rgba(240,234,214,0.3);margin-top:6px;">Mentionnez votre commande en référence</div>
+      </div>
+    </div>
+    <button class="order-btn" id="orderBtn" onclick="sendOrder()" disabled>🛵 Commander sur WhatsApp</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const WHATSAPP = "24165147101";
+let paymentMode = 'cash';
+
+const restaurants = [
+  {
+    id:1, name:"Super Toque", type:"Pizzeria · Pâtisserie", emoji:"🍕",
+    open:"07:00", close:"22:00",
+    note:"Pizzas disponibles à partir de 14h30 · Préparation : 25 min",
+    menu:[
+      {cat:"Gâteaux (mariages & anniversaires)", items:[
+        {name:"Gâteau 10 parts", desc:"Commande spéciale — préciser le thème", price:15500},
+        {name:"Gâteau 15 parts", desc:"Commande spéciale — préciser le thème", price:23000},
+        {name:"Gâteau 20 parts", desc:"Commande spéciale — préciser le thème", price:30500},
+      ]},
+      {cat:"Pizzas (disponibles dès 14h30)", items:[
+        {name:"Vosgienne", desc:"", price:7000},
+        {name:"Corléone", desc:"", price:8000},
+        {name:"Végétarienne", desc:"", price:6500},
+        {name:"Mexicaine", desc:"", price:8000},
+        {name:"Colombienne", desc:"", price:7000},
+        {name:"Margarita", desc:"", price:6000},
+        {name:"Régina", desc:"", price:7000},
+        {name:"Quatre Saisons", desc:"", price:8000},
+        {name:"Volcano", desc:"", price:8000},
+        {name:"Galzone", desc:"", price:8000},
+        {name:"Océane", desc:"", price:8000},
+      ]},
+      {cat:"Boissons", items:[
+        {name:"Moca", desc:"", price:2000},
+      ]},
+    ]
+  },
+  {
+    id:2, name:"Bessa-Benna", type:"Cuisine locale & internationale", emoji:"🍽️",
+    open:"10:00", close:"22:00",
+    note:"Préparation : 30 min",
+    menu:[
+      {cat:"Viandes & Grillades", items:[
+        {name:"Brochette de poulet", desc:"", price:7500},
+        {name:"Brochette de bœuf", desc:"", price:12500},
+        {name:"Filet de bœuf", desc:"", price:12500},
+        {name:"Shawarma poulet", desc:"", price:3000},
+        {name:"Saucisses de Toulouse", desc:"", price:6500},
+        {name:"Steak haché", desc:"", price:5500},
+      ]},
+      {cat:"Viandes sauvages & spécialités", items:[
+        {name:"Tortue", desc:"", price:7500},
+        {name:"Gazelle", desc:"", price:5500},
+        {name:"Crocodile", desc:"", price:7500},
+      ]},
+      {cat:"Poissons", items:[
+        {name:"Aubergines poisson salé", desc:"", price:7000},
+        {name:"Bouillon de Carpe", desc:"", price:5500},
+        {name:"Poisson Chat", desc:"", price:7500},
+        {name:"Poisson salé choux carottes", desc:"", price:7000},
+      ]},
+      {cat:"Légumes & Accompagnements", items:[
+        {name:"Purée de manioc", desc:"", price:2000},
+        {name:"Nkumu 3 pièces", desc:"", price:4000},
+        {name:"Asperges", desc:"", price:6500},
+        {name:"Folong", desc:"", price:4500},
+        {name:"Feuilles de manioc", desc:"", price:4500},
+        {name:"Mouniaka", desc:"", price:5500},
+        {name:"Oseille", desc:"", price:4000},
+      ]},
+    ]
+  },
+];
+
+let cart = [];
+let qtys = {};
+let currentResto = null;
+
+function isOpen(r){
+  const now = new Date();
+  const cur = now.getHours()*60 + now.getMinutes();
+  const [oh,om] = r.open.split(":").map(Number);
+  const [ch,cm] = r.close.split(":").map(Number);
+  const o = oh*60+om;
+  const c = ch===0&&cm===0 ? 24*60 : ch*60+cm;
+  return cur>=o && cur<c;
+}
+
+function fmt(p){ return p.toLocaleString('fr-FR')+" F"; }
+
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+function renderRestos(){
+  const g=document.getElementById('restosGrid');
+  g.innerHTML='';
+  restaurants.forEach(r=>{
+    const open=isOpen(r);
+    const d=document.createElement('div');
+    d.className='resto-card'+(open?'':' closed');
+    d.innerHTML=`
+      <div class="resto-top">
+        <div class="resto-emoji">${r.emoji}</div>
+        <div class="status-badge ${open?'open':'closed'}">
+          <div class="status-dot ${open?'open':'closed'}"></div>
+          ${open?'Ouvert':'Fermé'}
+        </div>
+      </div>
+      <div class="resto-name">${r.name}</div>
+      <div class="resto-type">${r.type}</div>
+      <div class="resto-hours">${open?`Ferme à <span class="h-open">${r.close}</span>`:`Ouvre à <span class="h-closed">${r.open}</span>`}</div>
+      ${r.note?`<div class="resto-note">ℹ️ ${r.note}</div>`:''}
+      ${open?'<div class="resto-cta">Voir le menu →</div>':''}
+    `;
+    if(open) d.onclick=()=>openResto(r);
+    g.appendChild(d);
+  });
+}
+
+function openResto(r){
+  currentResto=r;
+  document.getElementById('modalName').textContent=r.name;
+  document.getElementById('modalType').textContent=r.type;
+  document.getElementById('modalHours').textContent='Ouvert de '+r.open+' à '+r.close;
+  document.getElementById('modalNote').textContent=r.note||'';
+  const ms=document.getElementById('menuSection');
+  ms.innerHTML='';
+  r.menu.forEach(cat=>{
+    const cd=document.createElement('div');
+    cd.className='menu-category';
+    cd.innerHTML='<div class="menu-cat-title">'+cat.cat+'</div>';
+    const id=document.createElement('div');
+    id.className='menu-items';
+    cat.items.forEach(item=>{
+      const key=r.id+'__'+item.name;
+      id.appendChild(buildItemEl(r,item,key));
+    });
+    cd.appendChild(id);
+    ms.appendChild(cd);
+  });
+  document.getElementById('restoOverlay').classList.add('active');
+  document.body.style.overflow='hidden';
+}
+
+function buildItemEl(r,item,key){
+  const qty=qtys[key]||0;
+  const div=document.createElement('div');
+  div.className='menu-item';
+  div.id='mi_'+key.replace(/[^a-zA-Z0-9]/g,'_');
+  const rId=r.id; const rName=r.name; const iName=item.name; const iPrice=item.price;
+  div.innerHTML=`
+    <div class="menu-item-info">
+      <div class="menu-item-name">${iName}</div>
+      ${item.desc?'<div class="menu-item-desc">'+item.desc+'</div>':''}
+    </div>
+    <div class="menu-item-right">
+      <div class="menu-item-price">${fmt(iPrice)}</div>
+      ${qty===0
+        ?`<button class="add-btn" onclick="addItem(${rId},'${rName}','${iName}',${iPrice})">+</button>`
+        :`<div class="qty-control">
+            <button class="qty-btn" onclick="changeQty(${rId},'${rName}','${iName}',${iPrice},-1)">−</button>
+            <span class="qty-num">${qty}</span>
+            <button class="qty-btn" onclick="changeQty(${rId},'${rName}','${iName}',${iPrice},1)">+</button>
+          </div>`
+      }
+    </div>
+  `;
+  return div;
+}
+
+function refreshItemEl(r,itemName,price){
+  const key=r.id+'__'+itemName;
+  const elId='mi_'+key.replace(/[^a-zA-Z0-9]/g,'_');
+  const el=document.getElementById(elId);
+  if(!el) return;
+  let desc='';
+  r.menu.forEach(c=>c.items.forEach(i=>{if(i.name===itemName)desc=i.desc||'';}));
+  const newEl=buildItemEl(r,{name:itemName,desc,price},key);
+  el.replaceWith(newEl);
+}
+
+function addItem(rId,rName,iName,price){
+  const key=rId+'__'+iName;
+  qtys[key]=(qtys[key]||0)+1;
+  const ex=cart.find(c=>c.key===key);
+  if(ex) ex.qty++;
+  else cart.push({key,restoId:rId,restoName:rName,name:iName,price,qty:1});
+  const r=restaurants.find(x=>x.id===rId);
+  if(r) refreshItemEl(r,iName,price);
+  refreshCart();
+  showToast('✅ '+iName+' ajouté !');
+}
+
+function changeQty(rId,rName,iName,price,delta){
+  const key=rId+'__'+iName;
+  qtys[key]=Math.max(0,(qtys[key]||0)+delta);
+  const idx=cart.findIndex(c=>c.key===key);
+  if(idx!==-1){
+    cart[idx].qty+=delta;
+    if(cart[idx].qty<=0) cart.splice(idx,1);
+  }
+  const r=restaurants.find(x=>x.id===rId);
+  if(r) refreshItemEl(r,iName,price);
+  refreshCart();
+}
+
+function removeFromCart(key){
+  const item=cart.find(c=>c.key===key);
+  if(item){
+    qtys[key]=0;
+    const r=restaurants.find(x=>x.id===item.restoId);
+    if(r) refreshItemEl(r,item.name,item.price);
+  }
+  cart=cart.filter(c=>c.key!==key);
   refreshCart();
 }
 
@@ -457,7 +898,7 @@ function refreshCart(){
   document.getElementById('orderBtn').disabled=cart.length===0;
   const ci=document.getElementById('cartItems');
   if(cart.length===0){
-    ci.innerHTML=`<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div class="cart-empty-text">Ton panier est vide.<br>Choisis un restaurant !</div></div>`;
+    ci.innerHTML='<div class="cart-empty"><div class="cart-empty-icon">🛒</div><div style="font-size:13px;">Ton panier est vide.<br>Choisis un restaurant !</div></div>';
     return;
   }
   ci.innerHTML='';
@@ -476,6 +917,28 @@ function refreshCart(){
   });
 }
 
+function setPayment(mode){
+  paymentMode=mode;
+  if(mode==='cash'){
+    document.getElementById('btnCash').className='pay-btn active';
+    document.getElementById('btnMomo').className='pay-btn inactive';
+    document.getElementById('momoBox').style.display='none';
+  } else {
+    document.getElementById('btnMomo').className='pay-btn active';
+    document.getElementById('btnCash').className='pay-btn inactive';
+    document.getElementById('momoBox').style.display='block';
+  }
+}
+
+function copyAirtel(){
+  navigator.clipboard.writeText('074149055').then(()=>{
+    const btn=document.getElementById('copyBtn');
+    btn.textContent='✓ COPIÉ';
+    btn.style.background='#22c55e';
+    setTimeout(()=>{btn.textContent='COPIER';btn.style.background='#FF4500';},2000);
+  }).catch(()=>showToast('Numéro : 074 14 90 55'));
+}
+
 function sendOrder(){
   if(!cart.length) return;
   const byResto={};
@@ -483,18 +946,19 @@ function sendOrder(){
     if(!byResto[item.restoName]) byResto[item.restoName]=[];
     byResto[item.restoName].push(item);
   });
-  let msg="Bonjour Speed'O ! 🛵\n\nVoici ma commande :\n\n";
+  let msg="Bonjour Speed'O ! \uD83D\uDEF5\n\nVoici ma commande :\n\n";
   Object.entries(byResto).forEach(([rName,items])=>{
-    msg+=`🏪 *${rName}*\n`;
-    items.forEach(i=>{ msg+=`  • ${i.qty}× ${i.name} — ${fmt(i.price*i.qty)}\n`; });
+    msg+="\uD83C\uDFEA *"+rName+"*\n";
+    items.forEach(i=>{ msg+="  \u2022 "+i.qty+"\xD7 "+i.name+" \u2014 "+fmt(i.price*i.qty)+"\n"; });
     msg+='\n';
   });
   const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  msg+=`💰 *Total repas* : ${fmt(total)}\n`;
-  msg+=`🚚 *Livraison* : 1 000 F\n`;
-  msg+=`💳 *Total à payer* : ${fmt(total+1000)}\n\n`;
-  msg+=`📍 Mon adresse : `;
-  window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`, '_blank');
+  msg+="\uD83D\uDCB0 *Total repas* : "+fmt(total)+"\n";
+  msg+="\uD83D\uDE9A *Livraison* : 2 000 F (zones éloignées : 3 500 F)\n";
+  msg+="\uD83D\uDCB3 *Paiement* : "+(paymentMode==='cash'?'Cash à la livraison':'Mobile Money \u2014 Airtel 074 14 90 55')+"\n\n";
+  msg+="\uD83D\uDCCD *Mon adresse* : ";
+  const url="https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg);
+  window.open(url,'_blank');
 }
 
 function toggleCart(){ document.getElementById('cartPanel').classList.toggle('open'); }
@@ -502,13 +966,13 @@ function closeModal(){ document.getElementById('restoOverlay').classList.remove(
 function closeOverlayClick(e){ if(e.target===document.getElementById('restoOverlay')) closeModal(); }
 
 new QRCode(document.getElementById("qrcode"),{
-  text:"https://wa.me/24165147101?text=Bonjour+SpeedO+je+veux+commander",
+  text:"https://nzambhnzambhmbonguilh-ship-it.github.io/Speed-O-/",
   width:160,height:160,colorDark:"#0A0A0A",colorLight:"#ffffff",
   correctLevel:QRCode.CorrectLevel.H
 });
 
 renderRestos();
-setInterval(renderRestos, 60000);
+setInterval(renderRestos,60000);
 </script>
 </body>
 </html>
