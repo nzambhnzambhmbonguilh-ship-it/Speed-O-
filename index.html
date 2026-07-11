@@ -232,7 +232,7 @@ let paymentMode = 'cash';
 
 const restaurants = [
   {
-    id:1, name:"Super Toque", type:"Pizzeria · Pâtisserie", emoji:"🍕",
+    id:1, name:"Super Toque", closedDays:[], type:"Pizzeria · Pâtisserie", emoji:"🍕",
     open:"07:00", close:"22:00",
     note:"Pizzas disponibles à partir de 14h30 · Préparation : 25 min",
     menu:[
@@ -260,7 +260,7 @@ const restaurants = [
     ]
   },
   {
-    id:3, name:"Sacha Food", type:"Shawarma · Salades · Plats", emoji:"🥗",
+    id:3, name:"Sacha Food", closedDays:[0,6], type:"Shawarma · Salades · Plats", emoji:"🥗",
     open:"06:00", close:"17:00",
     note:"Préparation : 10 min",
     menu:[
@@ -296,7 +296,7 @@ const restaurants = [
       ]},
     ]},
   {
-    id:2, name:"Bessa-Benna", type:"Cuisine locale & internationale", emoji:"🍽️",
+    id:2, name:"Bessa-Benna", closedDays:[1], type:"Cuisine locale & internationale", emoji:"🍽️",
     open:"10:00", close:"22:00",
     note:"Préparation : 30 min",
     menu:[
@@ -338,9 +338,22 @@ let currentResto = null;
 
 function isOpen(r){
   const now = new Date();
+  const day = now.getDay(); // 0=dim, 1=lun, 2=mar, 3=mer, 4=jeu, 5=ven, 6=sam
   const cur = now.getHours()*60 + now.getMinutes();
-  const [oh,om] = r.open.split(":").map(Number);
-  const [ch,cm] = r.close.split(":").map(Number);
+
+  // Jours de fermeture
+  if(r.closedDays && r.closedDays.includes(day)) return false;
+
+  // Horaires spéciaux selon le jour
+  let openStr = r.open;
+  let closeStr = r.close;
+  if(r.sundayHours && day === 0){
+    openStr = r.sundayHours.open;
+    closeStr = r.sundayHours.close;
+  }
+
+  const [oh,om] = openStr.split(":").map(Number);
+  const [ch,cm] = closeStr.split(":").map(Number);
   const o = oh*60+om;
   const c = ch===0&&cm===0 ? 24*60 : ch*60+cm;
   return cur>=o && cur<c;
