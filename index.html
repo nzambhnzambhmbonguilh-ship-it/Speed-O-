@@ -260,6 +260,88 @@ const restaurants = [
     ]
   },
   {
+    id:5, name:"La Courdinette", type:"Cuisine internationale & locale", emoji:"🍽️",
+    open:"08:00", close:"21:00",
+    note:"Fermeture : lundi 16h — vendredi-samedi 22h — dimanche ferme",
+    closedDays:[0],
+    specialHours:{
+      1:{open:"08:00",close:"16:00"},
+      2:{open:"08:00",close:"21:00"},
+      3:{open:"08:00",close:"21:00"},
+      4:{open:"08:00",close:"21:00"},
+      5:{open:"08:00",close:"22:00"},
+      6:{open:"08:00",close:"22:00"},
+    },
+    menu:[
+      {cat:"Entrees", items:[
+        {name:"Salade avocat crevette", desc:"", price:5500},
+        {name:"Salade du chef", desc:"", price:5500},
+        {name:"Salade Cesar", desc:"", price:5500},
+        {name:"Sambasse boeuf poisson", desc:"", price:5500},
+        {name:"Crabe farcis", desc:"", price:5500},
+        {name:"Salade Cambraise", desc:"", price:5500},
+        {name:"Nems poulet boeuf", desc:"", price:5500},
+      ]},
+      {cat:"Grillades", items:[
+        {name:"Magret de canard entier", desc:"", price:17500},
+        {name:"Magret de canard demi", desc:"", price:9000},
+        {name:"Pave de saumon", desc:"", price:9500},
+        {name:"Filet de poisson", desc:"", price:7500},
+        {name:"Merguez", desc:"", price:6000},
+        {name:"Saucisse de Toulouse", desc:"", price:6000},
+        {name:"Cote de porc", desc:"", price:7500},
+        {name:"Brochette poulet", desc:"", price:6000},
+        {name:"Brochette boeuf", desc:"", price:7500},
+        {name:"Chipolatas", desc:"", price:5500},
+        {name:"Poisson braise petit", desc:"", price:10500},
+        {name:"Poisson braise moyen", desc:"", price:12500},
+        {name:"Poisson braise grand", desc:"", price:17500},
+        {name:"Gambas", desc:"", price:20500},
+        {name:"Brochette de poisson", desc:"", price:3500},
+        {name:"Noix d entrecot", desc:"", price:13500},
+      ]},
+      {cat:"Nos pates", items:[
+        {name:"Spaghetti Bolognaise", desc:"", price:6500},
+        {name:"Spaghetti Carbonara", desc:"", price:6500},
+        {name:"Nouille chinoise au boeuf", desc:"", price:6500},
+        {name:"Nouille chinoise mixte", desc:"", price:8500},
+        {name:"Nouille chinoise aux crevettes", desc:"", price:7500},
+        {name:"Spaghetti viande", desc:"", price:7500},
+        {name:"Spaghetti poulet", desc:"", price:6000},
+        {name:"Nouille au poulet", desc:"", price:6500},
+      ]},
+      {cat:"Nos gibiers", items:[
+        {name:"Sanglier", desc:"", price:7500},
+        {name:"Bouillon de poisson de mer", desc:"", price:6500},
+        {name:"Porc-epic", desc:"", price:7500},
+        {name:"Gazelle", desc:"", price:6500},
+        {name:"Chat huant", desc:"", price:7500},
+      ]},
+      {cat:"Nos legumes", items:[
+        {name:"Aubergine Sardine", desc:"", price:5500},
+        {name:"Nkoumou Nfoula", desc:"", price:5500},
+        {name:"Oseille Sardine", desc:"", price:5500},
+        {name:"Nkoumou royal", desc:"", price:5500},
+        {name:"Poisson sale choux", desc:"", price:8500},
+        {name:"Tchamguy", desc:"", price:3500},
+        {name:"Folang", desc:"", price:5500},
+        {name:"Asperges Sardine", desc:"", price:5500},
+      ]},
+      {cat:"Desserts", items:[
+        {name:"Glace vanille", desc:"", price:500},
+        {name:"Glace caramel", desc:"", price:500},
+        {name:"Glace citron", desc:"", price:500},
+        {name:"Glace fraise", desc:"", price:500},
+        {name:"Glace chocolat", desc:"", price:500},
+      ]},
+      {cat:"Accompagnements — gratuits (double portion : 1000 F)", items:[
+        {name:"Manioc", desc:"Gratuit — double portion 1000 F", price:0},
+        {name:"Riz", desc:"Gratuit — double portion 1000 F", price:0},
+        {name:"Banane", desc:"Gratuit — double portion 1000 F", price:0},
+        {name:"Haricots verts", desc:"Gratuit — double portion 1000 F", price:0},
+      ]},
+    ]},
+  {
     id:3, name:"Sacha Food", closedDays:[0,6], type:"Shawarma · Salades · Plats", emoji:"🥗",
     open:"06:00", close:"17:00",
     note:"Préparation : 10 min",
@@ -338,20 +420,18 @@ let currentResto = null;
 
 function isOpen(r){
   const now = new Date();
-  const day = now.getDay(); // 0=dim, 1=lun, 2=mar, 3=mer, 4=jeu, 5=ven, 6=sam
+  const day = now.getDay();
   const cur = now.getHours()*60 + now.getMinutes();
-
-  // Jours de fermeture
   if(r.closedDays && r.closedDays.includes(day)) return false;
-
-  // Horaires spéciaux selon le jour
   let openStr = r.open;
   let closeStr = r.close;
-  if(r.sundayHours && day === 0){
+  if(r.specialHours && r.specialHours[day]){
+    openStr = r.specialHours[day].open;
+    closeStr = r.specialHours[day].close;
+  } else if(r.sundayHours && day===0){
     openStr = r.sundayHours.open;
     closeStr = r.sundayHours.close;
   }
-
   const [oh,om] = openStr.split(":").map(Number);
   const [ch,cm] = closeStr.split(":").map(Number);
   const o = oh*60+om;
