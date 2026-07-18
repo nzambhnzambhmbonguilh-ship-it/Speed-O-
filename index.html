@@ -10,21 +10,21 @@
 :root{--orange:#FF4500;--gold:#D4A017;--black:#0A0A0A;--gray:#1A1A1A;--gray2:#242424;--cream:#FFF5E9;--green:#22c55e;--red:#ef4444;--text:#F0EAD6;--muted:rgba(240,234,214,0.45);}
 *{margin:0;padding:0;box-sizing:border-box;}
 body{background:var(--black);color:var(--text);font-family:'Outfit',sans-serif;}
-nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,69,0,0.12);padding:14px 24px;display:flex;align-items[...]
+nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.96);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,69,0,0.12);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;}
 .nav-logo{font-family:'Bebas Neue',sans-serif;font-size:26px;color:var(--gold);letter-spacing:2px;}
 .nav-logo span{color:var(--orange);}
-.cart-btn{display:flex;align-items:center;gap:8px;background:var(--orange);color:white;border:none;cursor:pointer;padding:10px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;l[...]
+.cart-btn{display:flex;align-items:center;gap:8px;background:var(--orange);color:white;border:none;cursor:pointer;padding:10px 20px;font-family:'Outfit',sans-serif;font-size:13px;font-weight:700;letter-spacing:1px;text-transform:uppercase;border-radius:2px;transition:all 0.2s;}
 .cart-btn:hover{background:var(--gold);}
 .cart-count{background:white;color:var(--orange);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;}
 .cart-count.hidden{display:none;}
-.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;background:radial-gradient(ellipse at 70% 30%,rgba(255[...]
+.hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:100px 20px 60px;background:radial-gradient(ellipse at 70% 30%,rgba(255,69,0,0.12) 0%,transparent 60%),var(--black);}
 .hero-badge{background:var(--orange);color:white;font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;padding:6px 16px;border-radius:2px;margin-bottom:24px;}
 .hero-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(80px,16vw,150px);line-height:0.9;letter-spacing:-2px;color:var(--gold);}
 .hero-title span{color:var(--orange);}
 .hero-slogan{font-size:clamp(13px,2.5vw,18px);letter-spacing:3px;color:var(--muted);margin-top:14px;}
 .hero-divider{width:60px;height:2px;background:linear-gradient(90deg,var(--orange),var(--gold));margin:28px auto;}
 .hero-desc{max-width:440px;font-size:15px;line-height:1.8;color:rgba(240,234,214,0.7);}
-.hero-cta{display:inline-block;margin-top:32px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;paddi[...]
+.hero-cta{display:inline-block;margin-top:32px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:14px 36px;border-radius:2px;border:none;cursor:pointer;font-family:'Outfit',sans-serif;}
 .section{padding:80px 20px;max-width:960px;margin:0 auto;}
 .section-label{font-size:10px;font-weight:700;letter-spacing:4px;text-transform:uppercase;color:var(--orange);margin-bottom:10px;}
 .section-title{font-family:'Bebas Neue',sans-serif;font-size:clamp(32px,5vw,52px);color:var(--gold);margin-bottom:40px;}
@@ -49,8 +49,8 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.9
 .h-closed{color:var(--red);font-weight:700;}
 .resto-note{font-size:11px;color:var(--gold);margin-top:6px;}
 .resto-cta{margin-top:16px;display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--orange);}
-.coming-soon{text-align:center;padding:40px;background:var(--gray);border:1px dashed rgba(255,69,0,0.2);color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:3px[...]
-.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:80px 16px 20px;overflow-y:auto;[...]
+.coming-soon{text-align:center;padding:40px;background:var(--gray);border:1px dashed rgba(255,69,0,0.2);color:var(--muted);font-size:12px;letter-spacing:2px;text-transform:uppercase;margin-top:3px;}
+.overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,0.85);backdrop-filter:blur(6px);display:none;align-items:flex-start;justify-content:center;padding:80px 16px 20px;overflow-y:auto;}
 .overlay.active{display:flex;}
 .modal{background:var(--gray);width:100%;max-width:600px;border:1px solid rgba(255,69,0,0.15);margin:auto;animation:slideUp 0.3s ease;}
 @keyframes slideUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
@@ -59,7 +59,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.9
 .modal-resto-type{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;margin-top:4px;}
 .modal-resto-hours{font-size:12px;color:rgba(240,234,214,0.5);margin-top:6px;}
 .modal-resto-note{font-size:12px;color:var(--gold);margin-top:6px;}
-.close-btn{background:rgba(255,255,255,0.06);border:none;cursor:pointer;color:white;width:36px;height:36px;border-radius:2px;font-size:18px;display:flex;align-items:center;justify-content:center;f[...]
+.close-btn{background:rgba(255,255,255,0.06);border:none;cursor:pointer;color:white;width:36px;height:36px;border-radius:2px;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .close-btn:hover{background:rgba(255,69,0,0.3);}
 .menu-section{padding:0 28px 28px;}
 .menu-category{margin-top:24px;}
@@ -72,12 +72,12 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.9
 .menu-item-desc{font-size:11px;color:var(--muted);}
 .menu-item-right{display:flex;align-items:center;gap:12px;flex-shrink:0;}
 .menu-item-price{font-size:14px;font-weight:700;color:var(--gold);white-space:nowrap;}
-.add-btn{width:32px;height:32px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;color:white;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:[...]
+.add-btn{width:32px;height:32px;border-radius:50%;background:var(--orange);border:none;cursor:pointer;color:white;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
 .qty-control{display:flex;align-items:center;gap:8px;}
-.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:transparent;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-c[...]
+.qty-btn{width:28px;height:28px;border-radius:50%;border:1px solid rgba(255,255,255,0.15);background:transparent;color:white;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;}
 .qty-btn:hover{border-color:var(--orange);color:var(--orange);}
 .qty-num{font-size:14px;font-weight:700;min-width:16px;text-align:center;color:var(--gold);}
-.cart-panel{position:fixed;top:0;right:0;bottom:0;z-index:400;width:100%;max-width:380px;background:var(--gray);border-left:1px solid rgba(255,69,0,0.15);display:flex;flex-direction:column;transfo[...]
+.cart-panel{position:fixed;top:0;right:0;bottom:0;z-index:400;width:100%;max-width:380px;background:var(--gray);border-left:1px solid rgba(255,69,0,0.15);display:flex;flex-direction:column;transform:translateX(100%);transition:transform 0.35s cubic-bezier(0.4,0,0.2,1);}
 .cart-panel.open{transform:translateX(0);}
 .cart-header{padding:20px 24px;border-bottom:1px solid rgba(255,69,0,0.15);display:flex;align-items:center;justify-content:space-between;background:var(--gray2);}
 .cart-title{font-family:'Bebas Neue',sans-serif;font-size:28px;color:var(--gold);letter-spacing:2px;}
@@ -106,7 +106,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.9
 .momo-box{margin-top:10px;background:rgba(255,255,255,0.04);padding:12px;border-radius:2px;border:1px solid rgba(255,69,0,0.15);}
 .momo-num{font-size:18px;font-weight:700;color:var(--gold);letter-spacing:2px;}
 .momo-copy{background:var(--orange);border:none;color:white;font-size:11px;font-weight:700;padding:6px 12px;cursor:pointer;border-radius:2px;margin-left:10px;}
-.order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;l[...]
+.order-btn{width:100%;padding:16px;background:linear-gradient(135deg,var(--orange),#FF6B35);color:white;border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:2px;}
 .order-btn:disabled{opacity:0.4;cursor:not-allowed;}
 .steps-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:3px;margin-top:40px;}
 .step{background:var(--gray);padding:28px 20px;}
@@ -118,7 +118,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;background:rgba(10,10,10,0.9
 .qr-box{display:inline-block;background:white;padding:16px;border-radius:4px;margin:28px auto;box-shadow:0 20px 60px rgba(0,0,0,0.12);}
 footer{background:var(--gray);text-align:center;padding:36px 20px;font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;border-top:1px solid rgba(255,69,0,0.1);}
 footer strong{color:var(--gold);}
-.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gray);color:white;padding:12px 24px;border-radius:2px;border-left:3px solid var(--orange);f[...]
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--gray);color:white;padding:12px 24px;border-radius:2px;border-left:3px solid var(--orange);font-size:13px;font-weight:600;z-index:999;transition:transform 0.3s;white-space:nowrap;}
 .toast.show{transform:translateX(-50%) translateY(0);}
 </style>
 </head>
@@ -152,10 +152,10 @@ footer strong{color:var(--gold);}
   <p class="section-label">Simple comme bonjour</p>
   <h2 class="section-title">Comment ça marche ?</h2>
   <div class="steps-grid">
-    <div class="step"><div class="step-num">01</div><div class="step-icon">🏪</div><div class="step-title">Tu choisis</div><div class="step-desc">Sélectionne un restaurant ouvert et parcours s[...]
-    <div class="step"><div class="step-num">02</div><div class="step-icon">🛒</div><div class="step-title">Tu remplis</div><div class="step-desc">Ajoute tes plats au panier en un clic.</div></d[...]
-    <div class="step"><div class="step-num">03</div><div class="step-icon">📱</div><div class="step-title">Tu commandes</div><div class="step-desc">Clique sur Commander — ta commande part sur[...]
-    <div class="step"><div class="step-num">04</div><div class="step-icon">😋</div><div class="step-title">Tu te régales</div><div class="step-desc">Ton repas chaud arrive à ta porte. Cash ou[...]
+    <div class="step"><div class="step-num">01</div><div class="step-icon">🏪</div><div class="step-title">Tu choisis</div><div class="step-desc">Sélectionne un restaurant ouvert et parcours son menu.</div></div>
+    <div class="step"><div class="step-num">02</div><div class="step-icon">🛒</div><div class="step-title">Tu remplis</div><div class="step-desc">Ajoute tes plats au panier en un clic.</div></div>
+    <div class="step"><div class="step-num">03</div><div class="step-icon">📱</div><div class="step-title">Tu commandes</div><div class="step-desc">Clique sur Commander — ta commande part sur WhatsApp.</div></div>
+    <div class="step"><div class="step-num">04</div><div class="step-icon">😋</div><div class="step-title">Tu te régales</div><div class="step-desc">Ton repas chaud arrive à ta porte. Cash ou Mobile Money.</div></div>
   </div>
 </section>
 
@@ -369,17 +369,15 @@ const restaurants = [
     menu:[
       {cat:"Plats", items:[
         {name:"Mouniaka maquereau fume", desc:"", price:3500},
-        {name:"Sauce gombo", desc:"Crabe, poisson frit, maquereau et crevettes fumées — À partir de 6500 Frs", price:6500},
-        {name:"Bouillon de poisson capitaine", desc:"", price:5000},
-        {name:"Côte de porc au grill", desc:"", price:4500},
-        {name:"Poisson rouge braisé", desc:"", price:7500},
+        {name:"Sauce gombo — crabes, gambas, maquereau fume, crevettes fumees", desc:"A partir de 6000 F", price:6500},
+        {name:"Ailes de poulet fumees a l odika", desc:"", price:4000},
+        {name:"Bouillon de mer — gambas, crabes, langoustes, pommes terre", desc:"", price:10500},
       ]},
-      {cat:"Accompagnements (500 Frs suppl.)", items:[
-        {name:"Riz", desc:"500 Frs supplémentaires", price:0},
-        {name:"Manioc", desc:"500 Frs supplémentaires", price:0},
-        {name:"Foufou manioc", desc:"500 Frs supplémentaires", price:0},
-        {name:"Gari", desc:"500 Frs supplémentaires", price:0},
-        {name:"Beignets", desc:"500 Frs supplémentaires", price:0},
+      {cat:"Accompagnements (a preciser lors de la commande)", items:[
+        {name:"Gari", desc:"A preciser lors de la commande", price:0},
+        {name:"Manioc", desc:"A preciser lors de la commande", price:0},
+        {name:"Riz", desc:"A preciser lors de la commande", price:0},
+        {name:"Beignets", desc:"A preciser lors de la commande", price:0},
       ]},
     ]},
   {
@@ -634,17 +632,17 @@ function sendOrder(){
     if(!byResto[item.restoName]) byResto[item.restoName]=[];
     byResto[item.restoName].push(item);
   });
-  let msg="Bonjour Speed'O ! 🛵\n\nVoici ma commande :\n\n";
+  let msg="Bonjour Speed'O ! \uD83D\uDEF5\n\nVoici ma commande :\n\n";
   Object.entries(byResto).forEach(([rName,items])=>{
-    msg+="🏪 *"+rName+"*\n";
-    items.forEach(i=>{ msg+="  • "+i.qty+"× "+i.name+" — "+fmt(i.price*i.qty)+"\n"; });
+    msg+="\uD83C\uDFEA *"+rName+"*\n";
+    items.forEach(i=>{ msg+="  \u2022 "+i.qty+"\xD7 "+i.name+" \u2014 "+fmt(i.price*i.qty)+"\n"; });
     msg+='\n';
   });
   const total=cart.reduce((s,c)=>s+c.price*c.qty,0);
-  msg+="💰 *Total repas* : "+fmt(total)+"\n";
-  msg+="🚚 *Livraison* : 2 000 F (zones éloignées : 3 500 F)\n";
-  msg+="💳 *Paiement* : "+(paymentMode==='cash'?'Cash à la livraison':'Mobile Money — Airtel 074 14 90 55')+"\n\n";
-  msg+="📍 *Mon adresse* : ";
+  msg+="\uD83D\uDCB0 *Total repas* : "+fmt(total)+"\n";
+  msg+="\uD83D\uDE9A *Livraison* : 2 000 F (zones éloignées : 3 500 F)\n";
+  msg+="\uD83D\uDCB3 *Paiement* : "+(paymentMode==='cash'?'Cash à la livraison':'Mobile Money \u2014 Airtel 074 14 90 55')+"\n\n";
+  msg+="\uD83D\uDCCD *Mon adresse* : ";
   const url="https://wa.me/"+WHATSAPP+"?text="+encodeURIComponent(msg);
   window.open(url,'_blank');
 }
